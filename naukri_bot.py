@@ -2,9 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import os
 
@@ -17,31 +17,28 @@ options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-wait = WebDriverWait(driver, 20)
+wait = WebDriverWait(driver, 30)
 
 try:
     # Open Login Page
     driver.get("https://www.naukri.com/nlogin/login")
 
-    # Enter Email
-    wait.until(EC.presence_of_element_located((By.XPATH, '//input[@type="text"]'))).send_keys(EMAIL)
+    # Click Email Login Tab (important for new UI)
+    wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@placeholder="Enter your active Email ID"]'))).send_keys(EMAIL)
 
-    # Enter Password
-    wait.until(EC.presence_of_element_located((By.XPATH, '//input[@type="password"]'))).send_keys(PASSWORD)
+    wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@placeholder="Enter your password"]'))).send_keys(PASSWORD)
 
-    # Click Login
-    wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type="submit"]'))).click()
+    wait.until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(),"Login")]'))).click()
 
     time.sleep(5)
 
-    # Open Profile
+    # Go to Profile
     driver.get("https://www.naukri.com/mnjuser/profile")
     time.sleep(5)
 
-    # Handle "Continue" popup if present
+    # Handle Continue popup
     try:
-        continue_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(),"Continue")]')))
-        continue_btn.click()
+        wait.until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(),"Continue")]'))).click()
         time.sleep(3)
     except:
         pass
